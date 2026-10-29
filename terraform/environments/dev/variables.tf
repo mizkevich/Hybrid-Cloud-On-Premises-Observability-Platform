@@ -11,9 +11,14 @@ variable "project_name" {
 }
 
 variable "environment" {
-  description = "Deployment environment (e.g., dev, prod)"
+  description = "Deployment environment (dev, staging, prod)"
   type        = string
   default     = "dev"
+
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of: dev, staging, prod."
+  }
 }
 
 variable "vpc_cidr" {
@@ -29,14 +34,24 @@ variable "public_subnet_cidr" {
 }
 
 variable "admin_ip_cidr" {
-  description = "Your public IP in CIDR notation (e.g., 1.2.3.4/32) for SSH access"
+  description = "Your public IP in /32 CIDR notation for SSH access"
   type        = string
+
+  validation {
+    condition     = can(cidrnetmask(var.admin_ip_cidr)) && endswith(var.admin_ip_cidr, "/32")
+    error_message = "Security Policy: admin_ip_cidr must be a valid single-host IPv4 CIDR ending in /32 (never 0.0.0.0/0)."
+  }
 }
 
 variable "instance_type" {
-  description = "EC2 instance type (t3.micro is Free Tier eligible)"
+  description = "EC2 instance type (restricted for cost control)"
   type        = string
   default     = "t3.micro"
+
+  validation {
+    condition     = contains(["t3.micro", "t3.small"], var.instance_type)
+    error_message = "Cost Guardrail: Only t3.micro and t3.small are permitted in this lab."
+  }
 }
 
 variable "ssh_public_key_path" {
