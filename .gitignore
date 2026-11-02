@@ -10,3 +10,4 @@ crash.*.log
 *.key
 id_rsa*
 wg0.conf
+ansible/inventory/hosts.yml

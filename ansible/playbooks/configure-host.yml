@@ -1,0 +1,57 @@
+---
+- name: Baseline Linux Configuration & Docker Setup for AWS Hybrid Node
+  hosts: aws_nodes
+  become: true
+
+  tasks:
+    - name: Set system hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+
+    - name: Set timezone to UTC for consistent Prometheus telemetry timestamps
+      community.general.timezone:
+        name: Etc/UTC
+
+    - name: Update apt cache and install baseline operational & security packages
+      ansible.builtin.apt:
+        name:
+          - curl
+          - git
+          - htop
+          - jq
+          - unzip
+          - fail2ban
+          - chrony
+          - wireguard
+          - wireguard-tools
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure Chrony (NTP) and Fail2Ban services are enabled and running
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - chrony
+        - fail2ban
+        - docker
+
+    - name: Add ubuntu user to the docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: true
+
+    - name: Harden sysctl network parameters
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: true
+      loop:
+        - { key: "net.ipv4.conf.all.rp_filter", value: "1" }
+        - { key: "net.ipv4.tcp_syncookies", value: "1" }
