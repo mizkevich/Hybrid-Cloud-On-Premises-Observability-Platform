@@ -1,0 +1,43 @@
+---
+- name: Deploy Web Application and Node Exporter
+  hosts: aws_nodes
+  become: true
+
+  tasks:
+    - name: Ensure target application directory exists
+      ansible.builtin.file:
+        path: /opt/hybrid-workload
+        state: directory
+        mode: '0755'
+
+    - name: Template docker-compose.yml to the host
+      ansible.builtin.copy:
+        dest: /opt/hybrid-workload/docker-compose.yml
+        content: |
+          version: '3.8'
+          services:
+            webapp:
+              image: nginxdemos/hello:plain-text
+              container_name: hybrid-webapp
+              ports:
+                - "8080:80"
+              restart: unless-stopped
+
+            node_exporter:
+              image: prom/node-exporter:latest
+              container_name: node_exporter
+              ports:
+                - "9100:9100"
+              restart: unless-stopped
+              command:
+                - '--path.rootfs=/host'
+              pid: host
+              volumes:
+                - '/:/host:ro,rslave'
+
+    - name: Launch the Docker Compose stack
+      ansible.builtin.shell:
+        cmd: docker compose up -d
+        chdir: /opt/hybrid-workload
+      register: compose_output
+      changed_when: "'Started' in compose_output.stdout or 'Created' in compose_output.stdout"
