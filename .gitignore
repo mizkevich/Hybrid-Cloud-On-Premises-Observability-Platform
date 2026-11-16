@@ -11,3 +11,4 @@ crash.*.log
 id_rsa*
 wg0.conf
 ansible/inventory/hosts.yml
+ansible/playbooks/setup-wireguard.yml

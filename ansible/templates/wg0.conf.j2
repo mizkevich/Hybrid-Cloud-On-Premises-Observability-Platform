@@ -1,0 +1,9 @@
+[Interface]
+Address = {{ wireguard_ip }}/32
+PrivateKey = {{ wg_private_key }}
+
+[Peer]
+PublicKey = {{ contabo_public_key }}
+Endpoint = {{ contabo_endpoint_ip }}:51820
+AllowedIPs = 10.10.0.0/24
+PersistentKeepalive = 25
