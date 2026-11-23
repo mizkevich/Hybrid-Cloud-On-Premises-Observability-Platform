@@ -1,0 +1,8 @@
+- job_name: 'aws-ec2-nodes'
+  scrape_interval: 15s
+  static_configs:
+    - targets: ['10.10.0.50:9100']
+      labels:
+        instance: 'hybrid-infra-dev-ec2'
+        environment: 'dev'
+        provider: 'aws'
