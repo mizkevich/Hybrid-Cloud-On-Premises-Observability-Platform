@@ -1,5 +1,14 @@
 # 📊 Hybrid Cloud & On-Premises Observability Platform
 
+
+## Live dashboards
+No login. Each link runs only the queries saved on that dashboard.
+- [Homelab status](https://mizkevich.backlabel.app/public-dashboards/9f80cc10aaf4402a89ad723eb0d71ad9) — VPS health, HTTPS probe, targets up
+- [Homelab](https://mizkevich.backlabel.app/public-dashboards/369781425ee04b22ac7e1c26d0baf45c) — Flint firewall, Synology NAS, AWS EC2
+- [VPS host](https://mizkevich.backlabel.app/public-dashboards/120705c8c257429d84fdb17761c9c39d) — CPU, memory, disk, and network on the monitoring VPS
+- [Monitoring platform](https://mizkevich.backlabel.app/public-dashboards/eaf7fbecc611447080cf76d6e1fbea57) — Prometheus, Alertmanager, and the exporters
+
+
 This repository contains the Infrastructure as Code (IaC), deployment configurations, and architecture documentation for a centralized, multi-cloud monitoring stack. It bridges public cloud infrastructure (Contabo VPS and AWS) with an on-premises homelab environment (Synology NAS, Kubernetes, OpenWRT Firewall) using a secure WireGuard overlay network.
 
 The project demonstrates observability, hybrid networking, automated cloud provisioning, and configuration management.
